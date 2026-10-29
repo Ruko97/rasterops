@@ -71,28 +71,26 @@ abstract sig BitVal { bit: Int }
 one sig ClearVal extends BitVal {} { bit = 0 }
 one sig SetVal extends BitVal {} { bit = 1 } 
 
-sig Value {
-	value: ZRange -> one BitVal
-}
+let Value = ZRange -> one BitVal
 
-fun Black : Value { 
-	{ v: Value | all z: ZRange | v.value[z] = ClearVal }
-}
-
-fun White : Value {
-	{ v: Value | all z: ZRange | v.value[z] = SetVal }
-}
+fun Black : Int -> BitVal { ZRange -> ClearVal }
+fun White : Int -> BitVal { ZRange -> SetVal }
 
 fact Extensional { all disj v1, v2: Value | v1.value != v2.value }
 fact Unique { one Black and one White }
 
-sig PixMap {
-	map: Pixel -> lone Value
+let PixMap = Pixel -> lone Value
+let PixMap1[m] = { some m }
+
+
+fun NAND[v1, v2: Value] : Value {
+  { n: ZRange, b: BitVal | 
+  		b = ((v1[n] = SetVal and v2[n] = SetVal) implies ClearVal else SetVal) }
 }
 
-fun PixMap1 : set PixMap {
-	{ p: PixMap | some p.map } 
+pred sameshape[p1, p2: PixMap] {
+	
 }
 
 // The check Zsize = 1 implies value = {Black, White}
-check {Grid.zsize = 1 => Value in Black + White}
+check {lone NAND[Black, White]} for 3 but 1 Grid, 2 Value, 2 BitVal
