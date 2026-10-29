@@ -92,4 +92,4 @@ pred sameshape[p1, p2: PixMap] {
 }
 
 // The check Zsize = 1 implies value = {Black, White}
-check {lone NAND[Black, White]} for 3 but 1 Grid, 2 Value, 2 BitVal
+check { Grid.zsize = 1 implies all x: Value | x = Black or x = White } for 4 but 4 Int
