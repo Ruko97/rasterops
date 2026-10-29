@@ -76,7 +76,6 @@ let Value = ZRange -> one BitVal
 let Black = ZRange -> ClearVal
 let White = ZRange -> SetVal
 
-fact Extensional { all disj v1, v2: Value | v1.value != v2.value }
 fact Unique { one Black and one White }
 
 let PixMap = Pixel -> lone Value
