@@ -1,4 +1,5 @@
 open util/integer
+open util/ternary
 
 one sig Grid {
 	xsize: Int,
@@ -87,9 +88,9 @@ fun NAND[v1, v2: Value] : Value {
   		b = ((v1[n] = SetVal and v2[n] = SetVal) implies ClearVal else SetVal) }
 }
 
-pred sameshape[p1, p2: PixMap] {
-	
+pred sameshape[m1, m2: PixMap] {
+	some p0: Pixel | let off = { p, q: Pixel | q = offset[p0, p] } | 
+		dom[off.m1] = dom[m2]
 }
 
-// The check Zsize = 1 implies value = {Black, White}
-check { Grid.zsize = 1 implies all x: Value | x = Black or x = White } for 4 but 4 Int
+check SameshapeRefl  { all a: PixMap | sameshape[a, a] } for 4 but 4 Int
