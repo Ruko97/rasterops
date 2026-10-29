@@ -73,8 +73,8 @@ one sig SetVal extends BitVal {} { bit = 1 }
 
 let Value = ZRange -> one BitVal
 
-fun Black : Int -> BitVal { ZRange -> ClearVal }
-fun White : Int -> BitVal { ZRange -> SetVal }
+let Black = ZRange -> ClearVal
+let White = ZRange -> SetVal
 
 fact Extensional { all disj v1, v2: Value | v1.value != v2.value }
 fact Unique { one Black and one White }
