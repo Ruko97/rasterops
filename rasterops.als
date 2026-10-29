@@ -93,7 +93,11 @@ pred sameshape[m1, m2: PixMap] {
 		dom[off.m1] = dom[m2]
 }
 
-
+pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
+	p1 in dom[m1] and p2 in dom[m2]
+	some p0: Pixel | let off = { p, q: Pixel | q = offset[p0, p] } | 
+		dom[off.m1] = dom[m2] and offset[p0, p2] = p1
+}
 
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
 check SameshapeRefl  { all a: PixMap | sameshape[a, a] } for 4 but 4 Int
