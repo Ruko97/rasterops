@@ -100,4 +100,10 @@ pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
 }
 
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
-check SameshapeRefl  { all a: PixMap | sameshape[a, a] } for 4 but 4 Int
+
+assert SameposImpliesSameshape {
+  all m1, m2: PixMap, p1, p2: Pixel | 
+	samepos[p1, m1, p2, m2] implies sameshape[m1, m2]
+}
+
+check SameposImpliesSameshape for 4 but exactly 1 Grid
