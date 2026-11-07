@@ -89,8 +89,9 @@ fun NAND[v1, v2: Value] : Value {
 }
 
 pred sameshape[m1, m2: PixMap] {
-	some p0: Pixel | let off = { p, q: Pixel | q = offset[p0, p] } | 
-		dom[off.m1] = dom[m2]
+	some p0: Pixel | 
+		let shifted = { q: Pixel | some p: dom[m1] | q = offset[p0, p] } |
+		shifted = dom[m2]
 }
 
 pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
@@ -99,11 +100,20 @@ pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
 		dom[off.m1] = dom[m2] and offset[p0, p2] = p1
 }
 
+/*fun nand[m1, m2: PixMap]: lone PixMap {
+	{ m: PixMap | 
+		dom[m] = dom[m2] and 
+		all p1: dom[m1], p2: dom[m2] | }
+		
+}*/
+
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
 
 assert SameposImpliesSameshape {
   all m1, m2: PixMap, p1, p2: Pixel | 
 	samepos[p1, m1, p2, m2] implies sameshape[m1, m2]
 }
+
+
 
 check SameposImpliesSameshape for 4 but exactly 1 Grid
