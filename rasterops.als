@@ -88,16 +88,21 @@ fun NAND[v1, v2: Value] : Value {
   		b = ((v1[n] = SetVal and v2[n] = SetVal) implies ClearVal else SetVal) }
 }
 
+-- Helper function. Returns a Pixel -> Pixel relation that shifts every pixel by the offset p0.
+fun shift[p0: Pixel]: Pixel -> Pixel {
+	{ p, q: Pixel | q = offset[p0, p] }
+}
+
 pred sameshape[m1, m2: PixMap] {
 	some p0: Pixel | 
-		let shifted = { q: Pixel | some p: dom[m1] | q = offset[p0, p] } |
-		shifted = dom[m2]
+		dom[shift[p0].m1] = dom[m2]
 }
 
 pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
 	p1 in dom[m1] and p2 in dom[m2]
-	some p0: Pixel | let off = { p, q: Pixel | q = offset[p0, p] } | 
-		dom[off.m1] = dom[m2] and offset[p0, p2] = p1
+	some p0: Pixel | 
+		dom[shift[p0].m1] = dom[m2] and
+		p1 -> p2 in shift[p0]
 }
 
 /*fun nand[m1, m2: PixMap]: lone PixMap {
