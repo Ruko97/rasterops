@@ -131,3 +131,14 @@ assert SameposImpliesSameshape {
 }
 
 check SameposImpliesSameshape for 4 but exactly 1 Grid, 5 TestMaps
+
+pred showTwoSetups {
+	some disj t1, t2: TestMaps {
+		some p1, p2: Pixel | 
+			samepos[p1, t1.maps, p2, t1.maps] and 
+			samepos[p1, t2.maps, p2, t2.maps] and
+			t1.maps != t2.maps
+	}
+}
+
+run showTwoSetups for 4 but exactly 1 Grid, 2 TestMaps
