@@ -119,11 +119,15 @@ fun nand[m1, m2: PixMap]: PixMap {
 
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
 
+sig TestMaps {
+	maps: PixMap
+} {
+	some maps
+}
+
 assert SameposImpliesSameshape {
   all m1, m2: PixMap, p1, p2: Pixel | 
 	samepos[p1, m1, p2, m2] implies sameshape[m1, m2]
 }
 
-
-
-check SameposImpliesSameshape for 4 but exactly 1 Grid
+check SameposImpliesSameshape for 4 but exactly 1 Grid, 5 TestMaps
