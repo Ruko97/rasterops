@@ -77,8 +77,6 @@ let Value = ZRange -> one BitVal
 let Black = ZRange -> ClearVal
 let White = ZRange -> SetVal
 
-fact Unique { one Black and one White }
-
 let PixMap = Pixel -> lone Value
 let PixMap1[m] = { some m }
 
@@ -98,19 +96,27 @@ pred sameshape[m1, m2: PixMap] {
 		dom[shift[p0].m1] = dom[m2]
 }
 
+pred mappair[m1, m2: Pixmap] {
+	sameshape[m1, m2]
+}
+
 pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
 	p1 in dom[m1] and p2 in dom[m2]
 	some p0: Pixel | 
 		dom[shift[p0].m1] = dom[m2] and
 		p1 -> p2 in shift[p0]
 }
-
-/*fun nand[m1, m2: PixMap]: lone PixMap {
+fun nand[m1, m2: PixMap]: lone PixMap {
 	{ m: PixMap | 
-		dom[m] = dom[m2] and 
-		all p1: dom[m1], p2: dom[m2] | }
+		mappair[m1, m2] and
+		dom[m] = dom[m2] and
+		all p2: dom[m2] |
+			some p1: dom[m1] | 
+				samepos[p1, m1, p2, m2] and
+				m[p2] = NAND[m1[p1], m2[p2]] 
+	}
 		
-}*/
+}
 
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
 
