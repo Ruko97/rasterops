@@ -108,12 +108,12 @@ pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
 }
 
 fun nand[m1, m2: PixMap]: PixMap {
-	{ p2: Pixel, v: Value | 
+	{ p2: Pixel, n: ZRange, b: BitVal | 
 		mappair[m1, m2] and
 		p2 in dom[m2] and
 		some p1: dom[m1] | 
 			samepos[p1, m1, p2, m2] and
-			v = NAND[m1[p1], m2[p2]] 
+			(n -> b) in NAND[m1[p1], m2[p2]] 
 	}		
 }
 
