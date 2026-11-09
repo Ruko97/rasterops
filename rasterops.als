@@ -134,6 +134,25 @@ fun m_set[m: PixMap]: PixMap {
 	m_not[m_clear[m]]
 }
 
+fun m_and[m1, m2: PixMap]: PixMap {
+	m_not[m_nand[m1, m2]]
+}
+
+fun m_or[m1, m2: PixMap]: PixMap {
+	m_nand[m_not[m1], m_not[m2]]
+}
+
+fun m_xor[m1, m2: PixMap]: PixMap {
+	m_and[m_or[m1, m2], m_nand[m1, m2]]
+}
+
+fun m_nor[m1, m2: PixMap]: PixMap {
+	m_not[m_or[m1, m2]]
+}
+
+fun m_copy[m1, m2: PixMap]: PixMap {
+	m_or[m1, m_clear[m2]]
+}
 
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
 
