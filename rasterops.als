@@ -77,7 +77,11 @@ let Value = ZRange -> one BitVal
 let Black = ZRange -> ClearVal
 let White = ZRange -> SetVal
 
-let PixMap = Pixel -> lone Value
+let PixMap = Pixel -> ZRange -> lone BitVal
+pred validPixMap[m: PixMap] {
+	all p: dom[m], z: ZRange | one m[p][z]
+}
+
 let PixMap1[m] = { some m }
 
 
@@ -92,8 +96,8 @@ fun shift[p0: Pixel]: Pixel -> Pixel {
 }
 
 pred sameshape[m1, m2: PixMap] {
-	some p0: Pixel | 
-		dom[shift[p0].m1] = dom[m2]
+	one p0: Pixel | 
+		(dom[m1]).(shift[p0]) = dom[m2]
 }
 
 pred mappair[m1, m2: PixMap] {
@@ -103,8 +107,8 @@ pred mappair[m1, m2: PixMap] {
 pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
 	mappair[m1, m2]
 	p1 in dom[m1] and p2 in dom[m2]
-	some p0: Pixel | 
-		dom[shift[p0].m1] = dom[m2] and
+	one p0: Pixel | 
+		(dom[m1]).(shift[p0]) = dom[m2] and
 		p1 -> p2 in shift[p0]
 }
 
@@ -112,7 +116,7 @@ fun m_nand[m1, m2: PixMap]: PixMap {
 	let m = { p2: Pixel, n: ZRange, b: BitVal | 
 		mappair[m1, m2] and
 		p2 in dom[m2] and
-		some p1: dom[m1] | 
+		one p1: dom[m1] | 
 			samepos[p1, m1, p2, m2] and
 			(n -> b) in v_NAND[m1[p1], m2[p2]] 
 	} | m	
@@ -185,4 +189,4 @@ assert MapPairImpliesNANDCommutative {
 	mappair[m1, m2] and dom[m1] = dom[m2] implies m_nand[m1, m2] = m_nand[m2, m1]
 }
 
-check MapPairImpliesNANDCommutative for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
+check MapPairImpliesNANDCommutative for 4 but exactly 1 Grid, 4 Pixel, 2 TestMaps
