@@ -141,4 +141,4 @@ pred showTwoSetups {
 	}
 }
 
-run showTwoSetups for 4 but exactly 1 Grid, 2 TestMaps
+run showTwoSetups for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
