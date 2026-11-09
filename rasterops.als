@@ -81,7 +81,7 @@ let PixMap = Pixel -> lone Value
 let PixMap1[m] = { some m }
 
 
-fun NAND[v1, v2: Value] : Value {
+fun v_NAND[v1, v2: Value] : Value {
   { n: ZRange, b: BitVal | 
   		b = ((v1[n] = SetVal and v2[n] = SetVal) implies ClearVal else SetVal) }
 }
@@ -107,14 +107,22 @@ pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
 		p1 -> p2 in shift[p0]
 }
 
-fun nand[m1, m2: PixMap]: PixMap {
+fun m_nand[m1, m2: PixMap]: PixMap {
 	let m = { p2: Pixel, n: ZRange, b: BitVal | 
 		mappair[m1, m2] and
 		p2 in dom[m2] and
 		some p1: dom[m1] | 
 			samepos[p1, m1, p2, m2] and
-			(n -> b) in NAND[m1[p1], m2[p2]] 
+			(n -> b) in v_NAND[m1[p1], m2[p2]] 
 	} | m	
+}
+
+fun m_noop[m: PixMap]: PixMap {
+	m
+}
+
+fun m_not[m: PixMap]: PixMap {
+	m_nand[m, m]
 }
 
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
@@ -142,3 +150,10 @@ pred showTwoSetups {
 }
 
 run showTwoSetups for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
+
+assert MapPairImpliesNANDCommutative {
+  all m1, m2: PixMap | 
+	mappair[m1, m2] and dom[m1] = dom[m2] implies m_nand[m1, m2] = m_nand[m2, m1]
+}
+
+check MapPairImpliesNANDCommutative for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
