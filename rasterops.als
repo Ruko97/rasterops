@@ -101,6 +101,7 @@ pred mappair[m1, m2: PixMap] {
 }
 
 pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
+	mappair[m1, m2]
 	p1 in dom[m1] and p2 in dom[m2]
 	some p0: Pixel | 
 		dom[shift[p0].m1] = dom[m2] and
