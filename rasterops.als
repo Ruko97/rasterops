@@ -28,17 +28,17 @@ sig PixelPair {
 	pix2: Pixel
 }
 
-fun padd[p1, p2: Pixel]: lone Pixel {
+fun p_add[p1, p2: Pixel]: lone Pixel {
 	let x_ = plus[p1.x, p2.x], y_ = plus[p1.y, p2.y] | 
 		{ p: Pixel | p.x = x_ and p.y = y_ }  
 }
 
-fun psub[p1, p2: Pixel]: lone Pixel {
+fun p_sub[p1, p2: Pixel]: lone Pixel {
   let x_ = minus[p1.x, p2.x], y_ = minus[p1.y, p2.y] |
     { p: Pixel | p.x = x_ and p.y = y_ }
 }
 
-pred pleq[p1, p2: Pixel] {
+pred p_leq[p1, p2: Pixel] {
 	p1.x <= p2.x and p1.y <= p2.y
 }
 
@@ -55,7 +55,7 @@ fun offset[p1, p2: Pixel]: one Pixel {
 }
 
 fun rect[p1, p2: Pixel]: set Pixel {
-	{ p: Pixel | pleq[p1, p] and pleq[p, p2] }  
+	{ p: Pixel | p_leq[p1, p] and p_leq[p, p2] }  
 }
 
 fun pmax[p1, p2: Pixel]: one Pixel {
