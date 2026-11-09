@@ -125,6 +125,11 @@ fun m_not[m: PixMap]: PixMap {
 	m_nand[m, m]
 }
 
+fun m_clear[m: PixMap]: PixMap {
+	m_nand[m, m_not[m]]
+}
+
+
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
 
 sig TestMaps {
