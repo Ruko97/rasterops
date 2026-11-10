@@ -85,6 +85,11 @@ pred validPixMap[m: PixMap] {
 
 let PixMap1[m] = { some m }
 
+fun rectangle[p1, p2: Pixel]: PixMap {
+	 let m = { p: Pixel, z: ZRange, b: BitVal |
+	 	one p1, p2: Pixel | p in rect[p1, p2]
+	 } | m
+}
 
 fun v_NAND[v1, v2: Value] : Value {
   { n: ZRange, b: BitVal | 
