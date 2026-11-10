@@ -84,10 +84,11 @@ assert ZsizeOneImpliesBlackOrWhite {
 check ZsizeOneImpliesBlackOrWhite for 4 but exactly 1 Grid
 
 let PixMap = Pixel -> ZRange -> lone BitVal
--- Helper function - need this to ensure that every pixel in the PixMap has exactly one value for each z-index.
-// pred validPixMap[m: PixMap] {
-// 	all p: dom[m], z: ZRange | one m[p][z]
-// }
+
+assert AtMostOneBitVal {
+	all t: TestMaps, p: Pixel, z: ZRange | lone t.maps[p][z]
+}
+check AtMostOneBitVal for 4
 
 let PixMap1[m] = { some m }
 
