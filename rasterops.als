@@ -204,6 +204,7 @@ sig TestMaps {
 	maps: PixMap
 } {
 	some maps
+	PixMap1[maps]
 }
 
 assert SameposImpliesSameshape {
