@@ -78,6 +78,7 @@ let Black = ZRange -> ClearVal
 let White = ZRange -> SetVal
 
 let PixMap = Pixel -> ZRange -> lone BitVal
+-- Helper function - need this to ensure that every pixel in the PixMap has exactly one value for each z-index.
 pred validPixMap[m: PixMap] {
 	all p: dom[m], z: ZRange | one m[p][z]
 }
