@@ -214,8 +214,9 @@ pred showTwoSetups {
 run showTwoSetups for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
 
 assert MapPairImpliesNANDCommutative {
-  all m1, m2: PixMap | 
-	mappair[m1, m2] and dom[m1] = dom[m2] implies m_nand[m1, m2] = m_nand[m2, m1]
+	all t1, t2: TestMaps |
+		let m1 = t1.maps, m2 = t2.maps |
+			mappair[m1, m2] and dom[m1] = dom[m2] implies m_nand[m1, m2] = m_nand[m2, m1]
 }
 
 check MapPairImpliesNANDCommutative for 4 but exactly 1 Grid, 4 Pixel, 2 TestMaps
