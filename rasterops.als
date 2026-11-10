@@ -233,3 +233,12 @@ assert MapPairImpliesNANDCommutative {
 }
 
 check MapPairImpliesNANDCommutative for 4 but exactly 1 Grid, 4 Pixel, 2 TestMaps
+
+
+sig Display {
+	var screen: PixMap
+}
+
+pred deltaDisplay{
+	dom[Display.screen'] = dom[Display.screen]
+}
