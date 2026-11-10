@@ -90,7 +90,7 @@ assert AtMostOneBitVal {
 }
 check AtMostOneBitVal for 4
 
-let PixMap1[m] = { some m }
+pred PixMap1[m: PixMap] { some m }
 
 pred rectangle[m: PixMap] {
 	PixMap1[m]
