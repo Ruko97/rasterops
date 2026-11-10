@@ -163,6 +163,30 @@ fun m_copy[m1, m2: PixMap]: PixMap {
 	m_or[m1, m_clear[m2]]
 }
 
+fun m_copyInverted[m1, m2: PixMap]: PixMap {
+	m_or[m_not[m1], m_clear[m2]]
+}
+
+fun m_andReverse[m1, m2: PixMap]: PixMap {
+	m_and[m1, m_not[m2]]
+}
+
+fun m_andInverted[m1, m2: PixMap]: PixMap {
+	m_and[m_not[m1], m2]
+}
+
+fun m_orReverse[m1, m2: PixMap]: PixMap {
+	m_or[m1, m_not[m2]]
+}
+
+fun m_orInverted[m1, m2: PixMap]: PixMap {
+	m_or[m_not[m1], m2]
+}
+
+fun m_equiv[m1, m2: PixMap]: PixMap {
+	m_xor[m_not[m1], m2]
+}
+
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
 
 sig TestMaps {
