@@ -77,6 +77,12 @@ let Value = ZRange -> one BitVal
 let Black = ZRange -> ClearVal
 let White = ZRange -> SetVal
 
+assert ZsizeOneImpliesBlackOrWhite {
+	all v: Value |
+		Grid.zsize = 1 implies (v = Black or v = White)
+}
+check ZsizeOneImpliesBlackOrWhite for 4 but exactly 1 Grid
+
 let PixMap = Pixel -> ZRange -> lone BitVal
 -- Helper function - need this to ensure that every pixel in the PixMap has exactly one value for each z-index.
 pred validPixMap[m: PixMap] {
