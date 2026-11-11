@@ -242,3 +242,33 @@ sig Display {
 pred deltaDisplay{
 	dom[Display.screen'] = dom[Display.screen]
 }
+
+enum Op1 { NOOP, NOT, CLEAR, SET }
+enum Op2 { 
+	AND, OR, XOR, NAND, NOR, COPY, COPYINVERTED, ANDREVERSE, 
+	ANDINVERTED, ORREVERSE, ORINVERTED, EQUIV 
+}
+
+fun applyOp1[op: Op1, m: PixMap]: PixMap {
+	op = NOOP implies m_noop[m] else
+	op = NOT implies m_not[m] else
+	op = CLEAR implies m_clear[m] else
+	m_set[m]
+}
+
+fun applyOp2[op: Op2, m1, m2: PixMap]: PixMap {
+	op = AND implies m_and[m1, m2] else
+	op = OR implies m_or[m1, m2] else
+	op = XOR implies m_xor[m1, m2] else
+	op = NAND implies m_nand[m1, m2] else
+	op = NOR implies m_nor[m1, m2] else
+	op = COPY implies m_copy[m1, m2] else
+	op = COPYINVERTED implies m_copyInverted[m1, m2] else
+	op = ANDREVERSE implies m_andReverse[m1, m2] else
+	op = ANDINVERTED implies m_andInverted[m1, m2] else
+	op = ORREVERSE implies m_orReverse[m1, m2] else
+	op = ORINVERTED implies m_orInverted[m1, m2] else
+	m_equiv[m1, m2]
+}
+
+
