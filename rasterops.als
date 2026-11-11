@@ -287,7 +287,7 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 }
 
 
-sig SepPair {
+abstract sig SepPair {
 	var map1: PixMap,
 	var map2: PixMap,
 }
