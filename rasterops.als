@@ -292,3 +292,19 @@ one sig SepPair {
 	var map2: PixMap,
 }
 
+pred seppair[m1, m2: PixMap] {
+	mappair[m1, m2]
+	not overlaps[m1, m2]
+}
+
+pred deltaseppair {
+	seppair[SepPair.map1, SepPair.map2]
+	seppair[SepPair.map1', SepPair.map2']
+}
+
+pred copyswap {
+	deltaseppair
+	SepPair.map1' = m_copy[SepPair.map2, SepPair.map1]
+	SepPair.map2' = m_copy[SepPair.map1, SepPair.map2]
+}
+
