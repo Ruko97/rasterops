@@ -286,4 +286,7 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 			screen ++ applyOp2[op, src, dst]
 }
 
-
+pred seppair[m1, m2: PixMap] {
+	mappair[m1, m2]
+	overlaps[m_not[m1], m2]
+}
