@@ -271,4 +271,12 @@ fun applyOp2[op: Op2, m1, m2: PixMap]: PixMap {
 	m_equiv[m1, m2]
 }
 
+fun rasterOp1[screen: PixMap, area: set Pixel, op: Op1]: PixMap {
+	screen ++ applyOp1[op, area <: screen]
+}
 
+fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
+	let src = (area.(shift[from])) <: screen, 
+		dst = area <: screen |
+			screen ++ applyOp2[op, dst, src]
+}
