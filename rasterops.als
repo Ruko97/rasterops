@@ -99,7 +99,7 @@ pred rectangle[m: PixMap] {
 }
 
 pred overlaps[m1, m2: PixMap] {
-	some (m1.dom & m2.dom)
+	some (dom[m1] & dom[m2])
 }
 
 
@@ -288,5 +288,5 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 
 pred seppair[m1, m2: PixMap] {
 	mappair[m1, m2]
-	overlaps[m_not[m1], m2]
+	not overlaps[m1, m2]
 }
