@@ -98,6 +98,11 @@ pred rectangle[m: PixMap] {
 		dom[m] = rect[p1, p2]
 }
 
+pred overlaps[m1, m2: PixMap] {
+	some (m1.dom & m2.dom)
+}
+
+
 fun v_NAND[v1, v2: Value] : Value {
   { n: ZRange, b: BitVal | 
   		b = ((v1[n] = SetVal and v2[n] = SetVal) implies ClearVal else SetVal) }
@@ -280,3 +285,5 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 		dst = area <: screen |
 			screen ++ applyOp2[op, src, dst]
 }
+
+
