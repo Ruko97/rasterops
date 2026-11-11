@@ -147,12 +147,12 @@ fun m_not[m: PixMap]: PixMap {
 	m_nand[m, m]
 }
 
-fun m_clear[m: PixMap]: PixMap {
+fun m_set[m: PixMap]: PixMap {
 	m_nand[m, m_not[m]]
 }
 
-fun m_set[m: PixMap]: PixMap {
-	m_not[m_clear[m]]
+fun m_clear[m: PixMap]: PixMap {
+	m_not[m_set[m]]
 }
 
 fun m_and[m1, m2: PixMap]: PixMap {
