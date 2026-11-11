@@ -287,67 +287,8 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 }
 
 
-abstract sig SepPair {
+one sig SepPair {
 	var map1: PixMap,
 	var map2: PixMap,
 }
 
-one sig SepPairTemp extends SepPair {
-	var temp: PixMap
-}
-
-pred seppair[m1, m2: PixMap] {
-	mappair[m1, m2]
-	not overlaps[m1, m2]
-}
-
-pred deltaseppair {
-	seppair[SepPair.map1, SepPair.map2]
-	seppair[SepPair.map1', SepPair.map2']
-}
-
-pred copyswap {
-	deltaseppair
-	SepPair.map1' = m_copy[SepPair.map2, SepPair.map1]
-	SepPair.map2' = m_copy[SepPair.map1, SepPair.map2]
-}
-
--- When using temp, all three maps must have same shape and none of them should overlap with each other.
-pred seppairfttemp[m1, m2, temp: PixMap] {
-	seppair[m1, m2]
-	seppair[m1, temp]
-	seppair[m2, temp]
-}
-
-pred deltaseppairfttemp {
-	seppairfttemp[SepPairTemp.map1, SepPairTemp.map2, SepPairTemp.temp]
-	seppairfttemp[SepPairTemp.map1', SepPairTemp.map2', SepPairTemp.temp']
-}
-
--- Step 1: Copy map1 into temp
-pred Copy1 {
-	deltaseppairfttemp
-	SepPairTemp.temp' = m_copy[SepPairTemp.map1, SepPairTemp.temp]
-	SepPairTemp.map1' = SepPairTemp.map1
-	SepPairTemp.map2' = SepPairTemp.map2
-}
-
--- Step 2: Copy map2 into map1
-pred Copy2 {
-	deltaseppairfttemp
-	SepPairTemp.map1' = m_copy[SepPairTemp.map2, SepPairTemp.map1]
-	SepPairTemp.map2' = SepPairTemp.map2
-	SepPairTemp.temp' = SepPairTemp.temp
-}
--- Step 3: Copy temp into map2
-pred Copy3 {
-	deltaseppairfttemp
-	SepPairTemp.map2' = m_copy[SepPairTemp.temp, SepPairTemp.map2]
-	SepPairTemp.map1' = SepPairTemp.map1
-	SepPairTemp.temp' = SepPairTemp.temp
-}
-
--- Sequentital 3-step copy swap using a temporary map as intermediary.
-pred CopySwapftTemp {
-	Copy1; Copy2; Copy3
-}
