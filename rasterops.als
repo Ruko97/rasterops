@@ -308,3 +308,30 @@ pred copyswap {
 	SepPair.map2' = m_copy[SepPair.map1, SepPair.map2]
 }
 
+pred xor1 {
+	deltaseppair
+	SepPair.map1' = m_xor[SepPair.map1, SepPair.map2]
+	SepPair.map2' = SepPair.map2
+}
+
+pred xor2 {
+	deltaseppair
+	SepPair.map1' = SepPair.map1
+	SepPair.map2' = m_xor[SepPair.map1, SepPair.map2]
+}
+
+pred xorswap {
+	xor1; xor2; xor1
+}
+
+assert seppairImpliesXorSwapIff {
+	deltaseppair implies (xorswap iff (xor2 and xor1 and xor2))
+}
+
+check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
+
+assert seppairImpliesXorSwapIsCopySwap {
+	deltaseppair implies (xorswap iff copyswap)
+}
+
+check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
