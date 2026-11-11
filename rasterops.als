@@ -278,5 +278,5 @@ fun rasterOp1[screen: PixMap, area: set Pixel, op: Op1]: PixMap {
 fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 	let src = (area.(shift[from])) <: screen, 
 		dst = area <: screen |
-			screen ++ applyOp2[op, dst, src]
+			screen ++ applyOp2[op, src, dst]
 }
