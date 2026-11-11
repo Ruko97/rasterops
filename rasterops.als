@@ -301,3 +301,9 @@ pred deltaseppair {
 	seppair[SepPair.map1, SepPair.map2]
 	seppair[SepPair.map1', SepPair.map2']
 }
+
+pred copyswap {
+	deltaseppair
+	SepPair.map1' = m_copy[SepPair.map2, SepPair.map1]
+	SepPair.map2' = m_copy[SepPair.map1, SepPair.map2]
+}
