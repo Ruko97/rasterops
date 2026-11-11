@@ -286,7 +286,18 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 			screen ++ applyOp2[op, src, dst]
 }
 
+
+one sig SepPair {
+	var map1: PixMap,
+	var map2: PixMap
+}
+
 pred seppair[m1, m2: PixMap] {
 	mappair[m1, m2]
 	not overlaps[m1, m2]
+}
+
+pred deltaseppair {
+	seppair[SepPair.map1, SepPair.map2]
+	seppair[SepPair.map1', SepPair.map2']
 }
