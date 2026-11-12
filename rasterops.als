@@ -332,7 +332,7 @@ assert seppairImpliesXorSwapIff {
 	all s0, s1, s2, s3: SepPair, t1, t2, t3: SepPair | 
 		(s0 -> s1 in xor1 and s1 -> s2 in xor2 and s2 -> s3 in xor1)
 		and
-		(s0 -> t1 in xorswap and t1 -> t2 in xorswap and t2 -> t3 in xorswap)
+		(s0 -> t1 in xor2 and t1 -> t2 in xor1 and t2 -> t3 in xor2)
 		implies s3.map1 = t3.map1 and s3.map2 = t3.map2
 }
 
