@@ -349,3 +349,16 @@ assert seppairImpliesXorSwapIsCopySwap {
 	deltaseppair implies (xorswap iff copyswap)
 }
 check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 2 steps
+
+/*
+fun step1[s: SepPair]: SepPair { { s': SepPair | s -> s' in xor1 } }
+fun step2[s: SepPair]: SepPair { { s': SepPair | s -> s' in xor2 } }
+
+assert seppairImpliesXorSwapIff {
+    all s: SepPair |
+        let r1 = step1[step2[step1[s]]],
+            r2 = step2[step1[step2[s]]] |
+            (some r1 and some r2) implies (r1.map1 = r2.map1 and r1.map2 = r2.map2)
+}
+*/
+
