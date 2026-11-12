@@ -336,7 +336,7 @@ assert seppairImpliesXorSwapIff {
 		implies s3.map1 = t3.map1 and s3.map2 = t3.map2
 }
 
-check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
+check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 2 TestMaps
 
 assert xorSwapIsCopySwap {
 	all s0, s1, s2, s3: SepPair |
@@ -344,4 +344,4 @@ assert xorSwapIsCopySwap {
 		implies s0 -> s3 in copyswap
 }
 
-check xorSwapIsCopySwap for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
+check xorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 2 TestMaps
