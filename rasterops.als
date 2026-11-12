@@ -329,7 +329,11 @@ fun xorswap: SepPair -> SepPair {
 }
 
 assert seppairImpliesXorSwapIff {
-	xorswap = (xor2 . xor1 . xor2)
+	all s0, s1, s2, s3: SepPair, t1, t2, t3: SepPair | 
+		(s0 -> s1 in xor1 and s1 -> s2 in xor2 and s2 -> s3 in xor1)
+		and
+		(s0 -> t1 in xorswap and t1 -> t2 in xorswap and t2 -> t3 in xorswap)
+		implies s3.map1 = t3.map1 and s3.map2 = t3.map2
 }
 
 check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
