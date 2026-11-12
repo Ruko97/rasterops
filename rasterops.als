@@ -206,8 +206,10 @@ fun m_equiv[m1, m2: PixMap]: PixMap {
 
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
 
+-- NOTE: Field types are written inline instead of using the PixMap macro,
+-- because Alloy drops the `lone` multiplicity when a field is declared via a let macro.
 sig TestMaps {
-	maps: PixMap
+	maps: Pixel -> ZRange -> lone BitVal
 } {
 	some maps
 	PixMap1[maps]
@@ -241,7 +243,7 @@ check MapPairImpliesNANDCommutative for 4 but exactly 1 Grid, 4 Pixel, 2 TestMap
 
 
 sig Display {
-	var screen: PixMap
+	var screen: Pixel -> ZRange -> lone BitVal
 }
 
 pred deltaDisplay{
@@ -288,8 +290,8 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 
 
 sig SepPair {
-	map1: PixMap,
-	map2: PixMap,
+	map1: Pixel -> ZRange -> lone BitVal,
+	map2: Pixel -> ZRange -> lone BitVal,
 }
 
 pred seppair[m1, m2: PixMap] {
@@ -301,8 +303,8 @@ pred seppair[m1, m2: PixMap] {
 fun copyswap: SepPair -> SepPair {
 	{ s, s_a: SepPair | 
 		seppair[s.map1, s.map2] and
-		s_a.map1 = m_copy[s.map1, s.map2] and
-		s_a.map2 = m_copy[s.map2, s.map1]
+		s_a.map1 = m_copy[s.map2, s.map1] and
+		s_a.map2 = m_copy[s.map1, s.map2]
 	}
 }
 
