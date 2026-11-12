@@ -287,9 +287,9 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 }
 
 
-one sig SepPair {
-	var map1: PixMap,
-	var map2: PixMap,
+sig SepPair {
+	map1: PixMap,
+	map2: PixMap,
 }
 
 pred seppair[m1, m2: PixMap] {
@@ -297,41 +297,43 @@ pred seppair[m1, m2: PixMap] {
 	not overlaps[m1, m2]
 }
 
-pred deltaseppair {
-	seppair[SepPair.map1, SepPair.map2]
-	seppair[SepPair.map1', SepPair.map2']
+-- Copyswap is a function that returns a map between the before and after states of a SepPair. 
+fun copyswap: SepPair -> SepPair {
+	{ s, s_a: SepPair | 
+		seppair[s.map1, s.map2] and
+		s_a.map1 = m_copy[s.map1, s.map2] and
+		s_a.map2 = m_copy[s.map2, s.map1]
+	}
 }
 
-pred copyswap {
-	deltaseppair
-	SepPair.map1' = m_copy[SepPair.map2, SepPair.map1]
-	SepPair.map2' = m_copy[SepPair.map1, SepPair.map2]
+fun xor1: SepPair -> SepPair {
+	{ s, s_a: SepPair | 
+		seppair[s.map1, s.map2] and
+		s_a.map1 = m_xor[s.map2, s.map1] and
+		s_a.map2 = s.map2
+	}
 }
 
-pred xor1 {
-	deltaseppair
-	SepPair.map1' = m_xor[SepPair.map2, SepPair.map1]
-	SepPair.map2' = SepPair.map2
+fun xor2: SepPair -> SepPair {
+	{ s, s_a: SepPair | 
+		seppair[s.map1, s.map2] and
+		s_a.map1 = s.map1 and
+		s_a.map2 = m_xor[s.map1, s.map2]
+	}
 }
 
-pred xor2 {
-	deltaseppair
-	SepPair.map1' = SepPair.map1
-	SepPair.map2' = m_xor[SepPair.map1, SepPair.map2]
-}
-
-pred xorswap {
-	xor1; xor2; xor1
+fun xorswap: SepPair -> SepPair {
+	xor1 . xor2 . xor1
 }
 
 assert seppairImpliesXorSwapIff {
-	deltaseppair implies (xorswap iff (xor2 ; xor1 ; xor2))
+	xorswap = (xor2 . xor1 . xor2)
 }
 
 check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
 
 assert seppairImpliesXorSwapIsCopySwap {
-	deltaseppair implies (xorswap iff copyswap)
+	xorswap = copyswap
 }
 
 check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
