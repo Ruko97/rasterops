@@ -289,7 +289,7 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 
 one sig SepPair {
 	var map1: PixMap,
-	var map2: PixMap,
+	var map2: PixMap
 }
 
 pred seppair[m1, m2: PixMap] {
@@ -302,36 +302,50 @@ pred deltaseppair {
 	seppair[SepPair.map1', SepPair.map2']
 }
 
+fun offsetBetween[m1, m2: PixMap]: set Pixel {
+	{ p0: Pixel | (dom[m1]).(shift[p0]) = dom[m2] }
+}
+
 pred copyswap {
 	deltaseppair
-	SepPair.map1' = m_copy[SepPair.map2, SepPair.map1]
-	SepPair.map2' = m_copy[SepPair.map1, SepPair.map2]
+	let m1 = SepPair.map1, m2 = SepPair.map2, s0 = m1 + m2 | {
+		SepPair.map1' = dom[m1] <: rasterOp2[s0, dom[m1], offsetBetween[m1, m2], COPY]
+		SepPair.map2' = dom[m2] <: rasterOp2[s0, dom[m2], offsetBetween[m2, m1], COPY]
+	}
 }
 
-pred xor1 {
-	deltaseppair
-	SepPair.map1' = m_xor[SepPair.map2, SepPair.map1]
-	SepPair.map2' = SepPair.map2
+fun xor1[s: PixMap]: PixMap {
+	let m1 = SepPair.map1, m2 = SepPair.map2 |
+		rasterOp2[s, dom[m1], offsetBetween[m1, m2], XOR]
 }
 
-pred xor2 {
-	deltaseppair
-	SepPair.map1' = SepPair.map1
-	SepPair.map2' = m_xor[SepPair.map1, SepPair.map2]
+fun xor2[s: PixMap]: PixMap {
+	let m1 = SepPair.map1, m2 = SepPair.map2 |
+		rasterOp2[s, dom[m2], offsetBetween[m2, m1], XOR]
 }
 
 pred xorswap {
-	xor1; xor2; xor1
+	deltaseppair
+	let s = (SepPair.map1 + SepPair.map2).xor1.xor2.xor1 | {
+		SepPair.map1' = dom[SepPair.map1] <: s
+		SepPair.map2' = dom[SepPair.map2] <: s
+	}
+}
+
+pred xorswap2 {
+	deltaseppair
+	let s = (SepPair.map1 + SepPair.map2).xor2.xor1.xor2 | {
+		SepPair.map1' = dom[SepPair.map1] <: s
+		SepPair.map2' = dom[SepPair.map2] <: s
+	}
 }
 
 assert seppairImpliesXorSwapIff {
-	deltaseppair implies (xorswap iff (xor2 ; xor1 ; xor2))
+	deltaseppair implies (xorswap iff xorswap2)
 }
-
-check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
+check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 2 steps
 
 assert seppairImpliesXorSwapIsCopySwap {
 	deltaseppair implies (xorswap iff copyswap)
 }
-
-check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
+check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 2 steps
