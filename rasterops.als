@@ -324,24 +324,26 @@ fun xor2: SepPair -> SepPair {
 	}
 }
 
-fun xorswap: SepPair -> SepPair {
-	xor1 . xor2 . xor1
+pred swap121[s, s_a: SepPair] {
+	some m1, m2: SepPair | s -> m1 in xor1 and m1 -> m2 in xor2 and m2 -> s_a in xor1
+}
+
+pred swap212[s, s_a: SepPair] {
+	some m1, m2: SepPair | s -> m1 in xor2 and m1 -> m2 in xor1 and m2 -> s_a in xor2
 }
 
 assert seppairImpliesXorSwapIff {
-	all s0, s1, s2, s3: SepPair, t1, t2, t3: SepPair | 
-		(s0 -> s1 in xor1 and s1 -> s2 in xor2 and s2 -> s3 in xor1)
-		and
-		(s0 -> t1 in xor2 and t1 -> t2 in xor1 and t2 -> t3 in xor2)
-		implies s3.map1 = t3.map1 and s3.map2 = t3.map2
+	all s, s_a: SepPair |
+		(some sp: SepPair | swap121[s, sp]) and
+		(some spp: SepPair | swap212[s, spp])
+		implies (swap121[s, s_a] iff swap212[s, s_a])
 }
 
 check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 2 TestMaps
 
 assert xorSwapIsCopySwap {
-	all s0, s1, s2, s3: SepPair |
-		(s0 -> s1 in xor1 and s1 -> s2 in xor2 and s2 -> s3 in xor1)
-		implies s0 -> s3 in copyswap
+	all s, s_a: SepPair |
+		swap121[s, s_a] implies s -> s_a in copyswap
 }
 
 check xorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 2 TestMaps
