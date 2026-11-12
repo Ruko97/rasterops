@@ -362,3 +362,15 @@ assert seppairImpliesXorSwapIff {
 }
 */
 
+/*
+let swap121[s, s_a] = (some m1, m2: SepPair | s -> m1 in xor1 and m1 -> m2 in xor2 and m2 -> s_a in xor1)
+let swap212[s, s_a] = (some m1, m2: SepPair | s -> m1 in xor2 and m1 -> m2 in xor1 and m2 -> s_a in xor2)
+
+assert seppairImpliesXorSwapIff {
+    all s, s_a: SepPair |
+        (some s' : SepPair | swap121[s, s']) and
+        (some s'': SepPair | swap212[s, s''])
+        implies (swap121[s, s_a] iff swap212[s, s_a])
+}
+*/
+
