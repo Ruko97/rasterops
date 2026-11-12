@@ -243,7 +243,7 @@ check MapPairImpliesNANDCommutative for 4 but exactly 1 Grid, 4 Pixel, 2 TestMap
 
 
 sig Display {
-	var screen: Pixel -> ZRange -> lone BitVal
+	screen: Pixel -> ZRange -> lone BitVal
 }
 
 pred deltaDisplay{
