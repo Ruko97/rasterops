@@ -314,83 +314,40 @@ pred copyswap {
 	}
 }
 
-fun xor1[s: PixMap]: PixMap {
-	let m1 = SepPair.map1, m2 = SepPair.map2 |
-		rasterOp2[s, dom[m1], offsetBetween[m1, m2], XOR]
+pred xor1 {
+	deltaseppair
+	let m1 = SepPair.map1, m2 = SepPair.map2, s0 = m1 + m2 | {
+		SepPair.map1' = dom[m1] <: rasterOp2[s0, dom[m1], offsetBetween[m1, m2], XOR]
+		SepPair.map2' = SepPair.map2
+	}
 }
 
-fun xor2[s: PixMap]: PixMap {
-	let m1 = SepPair.map1, m2 = SepPair.map2 |
-		rasterOp2[s, dom[m2], offsetBetween[m2, m1], XOR]
+pred xor2 {
+	deltaseppair
+	let m1 = SepPair.map1, m2 = SepPair.map2, s0 = m1 + m2 | {
+		SepPair.map1' = SepPair.map1
+		SepPair.map2' = dom[m2] <: rasterOp2[s0, dom[m2], offsetBetween[m2, m1], XOR]
+	}
 }
 
-fun xor1[s: SepPair]: SepPair { { s': SepPair | s -> s' in xor1 } }
-fun xor2[s: SepPair]: SepPair { { s': SepPair | s -> s' in xor2 } }
+pred xorswap {
+	xor1 ; xor2 ; xor1
+}
+
+pred xorswap2 {
+	xor2 ; xor1 ; xor2
+}
 
 assert seppairImpliesXorSwapIff {
-    all s: SepPair |
-        let r1 = xor1[xor2[xor1[s]]],
-            r2 = xor2[xor1[xor2[s]]] |
-            (some r1 and some r2) implies (r1.map1 = r2.map1 and r1.map2 = r2.map2)
-
-check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 2 steps
+	let m1 = SepPair.map1, m2 = SepPair.map2 |
+		(xorswap implies after after after (SepPair.map1 = m_copy[m2, m1] and SepPair.map2 = m_copy[m1, m2])) and
+		(xorswap2 implies after after after (SepPair.map1 = m_copy[m2, m1] and SepPair.map2 = m_copy[m1, m2]))
+}
+check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 4 steps
 
 assert seppairImpliesXorSwapIsCopySwap {
-	deltaseppair implies (xorswap iff copyswap)
+	let m1 = SepPair.map1, m2 = SepPair.map2 |
+		(xorswap ; copyswap) implies after after after after (SepPair.map1 = m1 and SepPair.map2 = m2)
 }
-check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 2 steps
+check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 5 steps
 
-/*
-fun step1[s: SepPair]: SepPair { { s': SepPair | s -> s' in xor1 } }
-fun step2[s: SepPair]: SepPair { { s': SepPair | s -> s' in xor2 } }
-
-assert seppairImpliesXorSwapIff {
-    all s: SepPair |
-        let r1 = step1[step2[step1[s]]],
-            r2 = step2[step1[step2[s]]] |
-            (some r1 and some r2) implies (r1.map1 = r2.map1 and r1.map2 = r2.map2)
-}
-*/
-
-/*
-let swap121[s, s_a] = (some m1, m2: SepPair | s -> m1 in xor1 and m1 -> m2 in xor2 and m2 -> s_a in xor1)
-let swap212[s, s_a] = (some m1, m2: SepPair | s -> m1 in xor2 and m1 -> m2 in xor1 and m2 -> s_a in xor2)
-
-assert seppairImpliesXorSwapIff {
-    all s, s_a: SepPair |
-        (some s' : SepPair | swap121[s, s']) and
-        (some s'': SepPair | swap212[s, s''])
-        implies (swap121[s, s_a] iff swap212[s, s_a])
-}
-*/
-
-/*
--- Alternative Style B: Tagged Pair Relation (Int -> PixMap) Pipeline
-let MapPairRel = Int -> PixMap
-
-fun xor1_pair[pair: MapPairRel]: MapPairRel {
-	let m1 = pair[1], m2 = pair[2] |
-		1 -> m_xor[m2, m1] + 2 -> m2
-}
-
-fun xor2_pair[pair: MapPairRel]: MapPairRel {
-	let m1 = pair[1], m2 = pair[2] |
-		1 -> m1 + 2 -> m_xor[m1, m2]
-}
-
-pred xorswap_pair {
-	deltaseppair
-	let res = (1 -> SepPair.map1 + 2 -> SepPair.map2).xor1_pair.xor2_pair.xor1_pair | {
-		SepPair.map1' = res[1]
-		SepPair.map2' = res[2]
-	}
-}
-
-pred xorswap2_pair {
-	deltaseppair
-	let res = (1 -> SepPair.map1 + 2 -> SepPair.map2).xor2_pair.xor1_pair.xor2_pair | {
-		SepPair.map1' = res[1]
-		SepPair.map2' = res[2]
-	}
-}
-*/
