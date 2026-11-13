@@ -374,3 +374,33 @@ assert seppairImpliesXorSwapIff {
 }
 */
 
+/*
+-- Alternative Style B: Tagged Pair Relation (Int -> PixMap) Pipeline
+let MapPairRel = Int -> PixMap
+
+fun xor1_pair[pair: MapPairRel]: MapPairRel {
+	let m1 = pair[1], m2 = pair[2] |
+		1 -> m_xor[m2, m1] + 2 -> m2
+}
+
+fun xor2_pair[pair: MapPairRel]: MapPairRel {
+	let m1 = pair[1], m2 = pair[2] |
+		1 -> m1 + 2 -> m_xor[m1, m2]
+}
+
+pred xorswap_pair {
+	deltaseppair
+	let res = (1 -> SepPair.map1 + 2 -> SepPair.map2).xor1_pair.xor2_pair.xor1_pair | {
+		SepPair.map1' = res[1]
+		SepPair.map2' = res[2]
+	}
+}
+
+pred xorswap2_pair {
+	deltaseppair
+	let res = (1 -> SepPair.map1 + 2 -> SepPair.map2).xor2_pair.xor1_pair.xor2_pair | {
+		SepPair.map1' = res[1]
+		SepPair.map2' = res[2]
+	}
+}
+*/
