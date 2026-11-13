@@ -324,25 +324,15 @@ fun xor2[s: PixMap]: PixMap {
 		rasterOp2[s, dom[m2], offsetBetween[m2, m1], XOR]
 }
 
-pred xorswap {
-	deltaseppair
-	let s = (SepPair.map1 + SepPair.map2).xor1.xor2.xor1 | {
-		SepPair.map1' = dom[SepPair.map1] <: s
-		SepPair.map2' = dom[SepPair.map2] <: s
-	}
-}
-
-pred xorswap2 {
-	deltaseppair
-	let s = (SepPair.map1 + SepPair.map2).xor2.xor1.xor2 | {
-		SepPair.map1' = dom[SepPair.map1] <: s
-		SepPair.map2' = dom[SepPair.map2] <: s
-	}
-}
+fun xor1[s: SepPair]: SepPair { { s': SepPair | s -> s' in xor1 } }
+fun xor2[s: SepPair]: SepPair { { s': SepPair | s -> s' in xor2 } }
 
 assert seppairImpliesXorSwapIff {
-	deltaseppair implies (xorswap iff xorswap2)
-}
+    all s: SepPair |
+        let r1 = xor1[xor2[xor1[s]]],
+            r2 = xor2[xor1[xor2[s]]] |
+            (some r1 and some r2) implies (r1.map1 = r2.map1 and r1.map2 = r2.map2)
+
 check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 2 steps
 
 assert seppairImpliesXorSwapIsCopySwap {
