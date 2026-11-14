@@ -333,10 +333,9 @@ pred swap212[s, s_a: SepPair] {
 }
 
 assert seppairImpliesXorSwapIff {
-	all s, s_a: SepPair |
-		(some sp: SepPair | swap121[s, sp]) and
-		(some spp: SepPair | swap212[s, spp])
-		implies (swap121[s, s_a] iff swap212[s, s_a])
+    all s, s121, s212: SepPair |
+        (swap121[s, s121] and swap212[s, s212])
+        implies (s121.map1 = s212.map1 and s121.map2 = s212.map2)
 }
 
 check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 2 TestMaps
