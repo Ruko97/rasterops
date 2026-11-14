@@ -355,9 +355,13 @@ assert seppairImpliesXorSwapIff {
 check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 4 Pixel, 2 SepPair, 4 steps
 
 assert seppairImpliesXorSwapIsCopySwap {
-	all s: SepPair |
-		let m1 = s.map1, m2 = s.map2 |
-			(xorswap[s] ; copyswap[s]) implies after after after after (s.map1 = m1 and s.map2 = m2)
+	all s1, s2: SepPair |
+		(s1.map1 = s2.map1 and s1.map2 = s2.map2 and xorswap[s1] and copyswap[s2])
+		implies after after after (
+			all p: Pixel, z: ZRange, b: BitVal |
+				((p -> z -> b in s1.map1) iff (before before (p -> z -> b in s2.map1))) and
+				((p -> z -> b in s1.map2) iff (before before (p -> z -> b in s2.map2)))
+		)
 }
-check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 4 Pixel, 1 SepPair, 5 steps
+check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 4 Pixel, 2 SepPair, 4 steps
 
