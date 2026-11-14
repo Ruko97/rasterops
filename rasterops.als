@@ -289,9 +289,17 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 }
 
 
+pred validPixmap[m: PixMap] {
+	all p: dom[m], z: ZRange | one m[p][z]
+}
+
 sig SepPair {
 	map1: Pixel -> ZRange -> lone BitVal,
 	map2: Pixel -> ZRange -> lone BitVal,
+} {
+	validPixmap[map1]
+	validPixmap[map2]
+	seppair[map1, map2]
 }
 
 pred seppair[m1, m2: PixMap] {
