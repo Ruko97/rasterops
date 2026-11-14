@@ -300,7 +300,7 @@ pred RasterOp2[area: set Pixel, from: Pixel, op: Op2] {
 }
 
 
-one sig SepPair {
+sig SepPair {
 	var map1: PixMap,
 	var map2: PixMap
 }
@@ -310,51 +310,54 @@ pred seppair[m1, m2: PixMap] {
 	not overlaps[m1, m2]
 }
 
-pred deltaseppair {
-	seppair[SepPair.map1, SepPair.map2]
-	seppair[SepPair.map1', SepPair.map2']
+pred deltaseppair[s: SepPair] {
+	seppair[s.map1, s.map2]
+	seppair[s.map1', s.map2']
 }
 
 fun offsetBetween[m1, m2: PixMap]: set Pixel {
 	{ p0: Pixel | (dom[m1]).(shift[p0]) = dom[m2] }
 }
 
-pred copyswap {
-	deltaseppair
-	let m1 = SepPair.map1, m2 = SepPair.map2, s0 = m1 + m2 | {
-		SepPair.map1' = dom[m1] <: rasterOp2[s0, dom[m1], offsetBetween[m1, m2], COPY]
-		SepPair.map2' = dom[m2] <: rasterOp2[s0, dom[m2], offsetBetween[m2, m1], COPY]
+pred copyswap[s: SepPair] {
+	deltaseppair[s]
+	let m1 = s.map1, m2 = s.map2, s0 = m1 + m2 | {
+		s.map1' = dom[m1] <: rasterOp2[s0, dom[m1], offsetBetween[m1, m2], COPY]
+		s.map2' = dom[m2] <: rasterOp2[s0, dom[m2], offsetBetween[m2, m1], COPY]
 	}
 }
 
-pred xor1 {
-	deltaseppair
-	SepPair.map1' = m_xor[SepPair.map2, SepPair.map1]
-	SepPair.map2' = SepPair.map2
+pred xor1[s: SepPair] {
+	deltaseppair[s]
+	s.map1' = m_xor[s.map2, s.map1]
+	s.map2' = s.map2
 }
 
-pred xor2 {
-	deltaseppair
-	SepPair.map1' = SepPair.map1
-	SepPair.map2' = m_xor[SepPair.map1, SepPair.map2]
+pred xor2[s: SepPair] {
+	deltaseppair[s]
+	s.map1' = s.map1
+	s.map2' = m_xor[s.map1, s.map2]
 }
 
-pred xorswap {
-	xor1 ; xor2 ; xor1
+pred xorswap[s: SepPair] {
+	xor1[s] ; xor2[s] ; xor1[s]
 }
 
-pred xorswap2 {
-	xor2 ; xor1 ; xor2
+pred xorswap2[s: SepPair] {
+	xor2[s] ; xor1[s] ; xor2[s]
 }
 
 assert seppairImpliesXorSwapIff {
-
+	all s1, s2: SepPair |
+		(s1.map1 = s2.map1 and s1.map2 = s2.map2 and xorswap[s1] and xorswap2[s2])
+		implies after after after (s1.map1 = s2.map1 and s1.map2 = s2.map2)
 }
-check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 4 steps
+check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 4 Pixel, 2 SepPair, 4 steps
 
 assert seppairImpliesXorSwapIsCopySwap {
-	let m1 = SepPair.map1, m2 = SepPair.map2 |
-		(xorswap ; copyswap) implies after after after after (SepPair.map1 = m1 and SepPair.map2 = m2)
+	all s: SepPair |
+		let m1 = s.map1, m2 = s.map2 |
+			(xorswap[s] ; copyswap[s]) implies after after after after (s.map1 = m1 and s.map2 = m2)
 }
-check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 5 steps
+check seppairImpliesXorSwapIsCopySwap for 4 but exactly 1 Grid, 4 Pixel, 1 SepPair, 5 steps
 
