@@ -345,7 +345,7 @@ assert xorSwapIsCopySwap {
 		swap121[s, s_a] implies s -> s_a in copyswap
 }
 
-check xorSwapIsCopySwap for 4 but exactly 1 Grid, 4 Pixel, 2 TestMaps
+check xorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 0 TestMaps, 0 Display, 0 PixelPair
 
 --------------------------------------------------------------------------------
 -- VISUAL DEMONSTRATION COMMANDS FOR INSTRUCTOR PRESENTATION
