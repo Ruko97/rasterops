@@ -286,6 +286,19 @@ fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
 			screen ++ applyOp2[op, src, dst]
 }
 
+pred RasterOp1[area: set Pixel, op: Op1] {
+	deltaDisplay
+	area in dom[Display.screen]
+	Display.screen' = rasterOp1[Display.screen, area, op]
+}
+
+pred RasterOp2[area: set Pixel, from: Pixel, op: Op2] {
+	deltaDisplay
+	area in dom[Display.screen]
+	(area.(shift[from])) in dom[Display.screen]
+	Display.screen' = rasterOp2[Display.screen, area, from, op]
+}
+
 
 one sig SepPair {
 	var map1: PixMap,
