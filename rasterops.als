@@ -333,11 +333,19 @@ fun xor2: SepPair -> SepPair {
 }
 
 pred swap121[s, s_a: SepPair] {
-	some m1, m2: SepPair | s -> m1 in xor1 and m1 -> m2 in xor2 and m2 -> s_a in xor1
+	seppair[s.map1, s.map2]
+	let m1_1 = m_xor[s.map2, s.map1], m1_2 = s.map2 |
+	let m2_1 = m1_1, m2_2 = m_xor[m1_1, m1_2] |
+		s_a.map1 = m_xor[m2_2, m2_1] and
+		s_a.map2 = m2_2
 }
 
 pred swap212[s, s_a: SepPair] {
-	some m1, m2: SepPair | s -> m1 in xor2 and m1 -> m2 in xor1 and m2 -> s_a in xor2
+	seppair[s.map1, s.map2]
+	let m1_1 = s.map1, m1_2 = m_xor[s.map1, s.map2] |
+	let m2_1 = m_xor[m1_2, m1_1], m2_2 = m1_2 |
+		s_a.map1 = m2_1 and
+		s_a.map2 = m_xor[m2_1, m2_2]
 }
 
 assert seppairImpliesXorSwapIff {
