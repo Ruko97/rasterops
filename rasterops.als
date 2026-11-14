@@ -358,7 +358,7 @@ check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 4 Pixel, 2 TestMaps
 
 assert xorSwapIsCopySwap {
 	all s, s_a: SepPair |
-		swap121[s, s_a] implies s -> s_a in copyswap
+		swap121[s, s_a] iff s -> s_a in copyswap
 }
 
 check xorSwapIsCopySwap for 4 but exactly 1 Grid, 4 Pixel, 2 TestMaps
