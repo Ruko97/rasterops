@@ -338,11 +338,11 @@ assert seppairImpliesXorSwapIff {
         implies (s121.map1 = s212.map1 and s121.map2 = s212.map2)
 }
 
-check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 2 TestMaps
+check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 4 Pixel, 2 TestMaps
 
 assert xorSwapIsCopySwap {
 	all s, s_a: SepPair |
 		swap121[s, s_a] implies s -> s_a in copyswap
 }
 
-check xorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 2 TestMaps
+check xorSwapIsCopySwap for 4 but exactly 1 Grid, 4 Pixel, 2 TestMaps
