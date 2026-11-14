@@ -329,18 +329,20 @@ pred copyswap {
 
 pred xor1 {
 	deltaseppair
-	let m1 = SepPair.map1, m2 = SepPair.map2, s0 = m1 + m2 | {
-		SepPair.map1' = dom[m1] <: rasterOp2[s0, dom[m1], offsetBetween[m1, m2], XOR]
-		SepPair.map2' = SepPair.map2
-	}
+	let m1 = SepPair.map1, m2 = SepPair.map2, s0 = m1 + m2 |
+		some p0: offsetBetween[m1, m2] | {
+			SepPair.map1' = dom[m1] <: rasterOp2[s0, dom[m1], p0, XOR]
+			SepPair.map2' = m2
+		}
 }
 
 pred xor2 {
 	deltaseppair
-	let m1 = SepPair.map1, m2 = SepPair.map2, s0 = m1 + m2 | {
-		SepPair.map1' = SepPair.map1
-		SepPair.map2' = dom[m2] <: rasterOp2[s0, dom[m2], offsetBetween[m2, m1], XOR]
-	}
+	let m1 = SepPair.map1, m2 = SepPair.map2, s0 = m1 + m2 |
+		some p0: offsetBetween[m2, m1] | {
+			SepPair.map1' = m1
+			SepPair.map2' = dom[m2] <: rasterOp2[s0, dom[m2], p0, XOR]
+		}
 }
 
 pred xorswap {
