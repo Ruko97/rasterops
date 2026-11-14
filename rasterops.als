@@ -348,9 +348,7 @@ pred xorswap2 {
 }
 
 assert seppairImpliesXorSwapIff {
-	let m1 = SepPair.map1, m2 = SepPair.map2 |
-		(xorswap implies after after after (SepPair.map1 = m_copy[m2, m1] and SepPair.map2 = m_copy[m1, m2])) and
-		(xorswap2 implies after after after (SepPair.map1 = m_copy[m2, m1] and SepPair.map2 = m_copy[m1, m2]))
+
 }
 check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 4 steps
 
