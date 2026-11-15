@@ -116,7 +116,7 @@ fun shift[p0: Pixel]: Pixel -> Pixel {
 -- We need to use one here cause some does not work with the shift function.
 -- We need to ensure that there is exactly one offset for each pixel in the PixMap.
 pred sameshape[m1, m2: PixMap] {
-	some p0: Pixel |
+	one p0: Pixel |
 		(dom[m1]).(shift[p0]) = dom[m2]
 }
 
@@ -129,7 +129,7 @@ pred mappair[m1, m2: PixMap] {
 pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
 	mappair[m1, m2]
 	p1 in dom[m1] and p2 in dom[m2]
-	some p0: Pixel |
+	one p0: Pixel |
 		(dom[m1]).(shift[p0]) = dom[m2] and
 		p1 -> p2 in shift[p0]
 }
