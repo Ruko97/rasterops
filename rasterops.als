@@ -90,7 +90,10 @@ assert AtMostOneBitVal {
 }
 check AtMostOneBitVal for 4
 
-pred PixMap1[m: PixMap] { some m }
+pred PixMap1[m: PixMap] {
+    some m
+    all p: dom[m], z: ZRange | one m[p][z]
+}
 
 pred rectangle[m: PixMap] {
 	PixMap1[m]
@@ -121,6 +124,7 @@ pred sameshape[m1, m2: PixMap] {
 }
 
 pred mappair[m1, m2: PixMap] {
+    PixMap1[m1] and PixMap1[m2]
 	sameshape[m1, m2]
 }
 
@@ -301,7 +305,7 @@ pred seppair[m1, m2: PixMap] {
 }
 
 -- Copyswap is a function that returns a map between the before and after states of a SepPair.
-pred copyswap[s, s_a: SepPair] {
+pred Copyswap[s, s_a: SepPair] {
 	seppair[s.map1, s.map2]
 	s_a.map1 = m_copy[s.map2, s.map1]
 	s_a.map2 = m_copy[s.map1, s.map2]
