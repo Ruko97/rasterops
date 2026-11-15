@@ -304,45 +304,30 @@ pred seppair[m1, m2: PixMap] {
 	not overlaps[m1, m2]
 }
 
--- Copyswap is a function that returns a map between the before and after states of a SepPair.
 pred copyswap[s, s_a: SepPair] {
 	seppair[s.map1, s.map2]
 	s_a.map1 = m_copy[s.map2, s.map1]
 	s_a.map2 = m_copy[s.map1, s.map2]
 }
 
-fun xor1: SepPair -> SepPair {
-	{ s, s_a: SepPair |
-		seppair[s.map1, s.map2] and
-		s_a.map1 = m_xor[s.map2, s.map1] and
-		s_a.map2 = s.map2
-	}
+pred xor1[s, s_a: SepPair] {
+	seppair[s.map1, s.map2]
+	s_a.map1 = m_xor[s.map2, s.map1]
+	s_a.map2 = s.map2
 }
 
-fun xor2: SepPair -> SepPair {
-	{ s, s_a: SepPair |
-		seppair[s.map1, s.map2] and
-		s_a.map1 = s.map1 and
-		s_a.map2 = m_xor[s.map1, s.map2]
-	}
+pred xor2[s, s_a: SepPair] {
+	seppair[s.map1, s.map2]
+	s_a.map1 = s.map1
+	s_a.map2 = m_xor[s.map1, s.map2]
 }
 
 pred swap121[s, s_a: SepPair] {
-    seppair[s.map1, s.map2]
-    let a1 = m_xor[s.map2, s.map1] |
-    let b2 = m_xor[a1, s.map2] |
-    let a3 = m_xor[b2, a1] |
-        s_a.map1 = a3 and
-        s_a.map2 = b2
+	some m1, m2: SepPair | xor1[s, m1] and xor2[m1, m2] and xor1[m2, s_a]
 }
 
 pred swap212[s, s_a: SepPair] {
-    seppair[s.map1, s.map2]
-    let b1 = m_xor[s.map1, s.map2] |
-    let a2 = m_xor[b1, s.map1] |
-    let b3 = m_xor[a2, b1] |
-        s_a.map1 = a2 and
-        s_a.map2 = b3
+	some m1, m2: SepPair | xor2[s, m1] and xor1[m1, m2] and xor2[m2, s_a]
 }
 
 assert seppairImpliesXorSwapIff {
