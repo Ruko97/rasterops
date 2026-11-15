@@ -351,9 +351,11 @@ check xorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 0 TestMaps, 0 Display
 -- VISUAL DEMONSTRATION COMMANDS FOR INSTRUCTOR PRESENTATION
 --------------------------------------------------------------------------------
 
--- Demo 1: Visualizing a Valid SepPair Setup
--- Shows two non-overlapping, same-shaped pixel maps with contrasting colors on a grid.
+-- Demo 1: Visualizing a Valid SepPair Setup (1x3 Grid)
+-- Shows two non-overlapping, same-shaped pixel maps with contrasting colors on a 1x3 grid.
 pred showSepPairSetup {
+	Grid.xsize = 1 and Grid.ysize = 3
+	all disj p1, p2: Pixel | p1.x != p2.x or p1.y != p2.y
 	some s: SepPair |
 		seppair[s.map1, s.map2] and
 		PixMap1[s.map1] and
@@ -361,15 +363,17 @@ pred showSepPairSetup {
 		(some p: dom[s.map1] | s.map1[p] = White) and
 		(some q: dom[s.map2] | s.map2[q] = Black)
 }
-run showSepPairSetup for 4 but 1 SepPair, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
+run showSepPairSetup for 4 but 1 SepPair, exactly 3 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
 
--- Demo 2: Visualizing the Complete 3-Step XOR Swap Execution Trace
--- Shows the 4 sequential states s0 -> s1 -> s2 -> s3:
+-- Demo 2: Visualizing the Complete 3-Step XOR Swap Execution Trace (1x3 Grid)
+-- Shows the 4 sequential states s0 -> s1 -> s2 -> s3 on a 1x3 grid:
 --   s0: Initial separated state (map1 = White, map2 = Black)
 --   s1: After xor1 (map1 becomes White XOR Black, map2 unchanged)
 --   s2: After xor2 (map2 becomes White, map1 unchanged)
 --   s3: After xor1 (map1 becomes Black, map2 remains White -> SWAP COMPLETE!)
 pred showXorSwapTrace {
+	Grid.xsize = 1 and Grid.ysize = 3
+	all disj p1, p2: Pixel | p1.x != p2.x or p1.y != p2.y
 	some disj s0, s1, s2, s3: SepPair |
 		seppair[s0.map1, s0.map2] and
 		PixMap1[s0.map1] and
@@ -380,11 +384,13 @@ pred showXorSwapTrace {
 		s1 -> s2 in xor2 and
 		s2 -> s3 in xor1
 }
-run showXorSwapTrace for 4 but exactly 4 SepPair, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
+run showXorSwapTrace for 4 but exactly 4 SepPair, exactly 3 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
 
--- Demo 3: Visualizing CopySwap Before-and-After
+-- Demo 3: Visualizing CopySwap Before-and-After (1x3 Grid)
 -- Shows the transition from initial state s0 to after-state s_copy via the simultaneous copy operation.
 pred showCopySwapOperation {
+	Grid.xsize = 1 and Grid.ysize = 3
+	all disj p1, p2: Pixel | p1.x != p2.x or p1.y != p2.y
 	some disj s0, s_copy: SepPair |
 		seppair[s0.map1, s0.map2] and
 		PixMap1[s0.map1] and
@@ -393,12 +399,14 @@ pred showCopySwapOperation {
 		(some q: dom[s0.map2] | s0.map2[q] = Black) and
 		s0 -> s_copy in copyswap
 }
-run showCopySwapOperation for 4 but 2 SepPair, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
+run showCopySwapOperation for 4 but 2 SepPair, exactly 3 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
 
--- Demo 4: Visualizing Equivalence Between 3-Step XorSwap and CopySwap
+-- Demo 4: Visualizing Equivalence Between 3-Step XorSwap and CopySwap (1x3 Grid)
 -- Visually demonstrates that the state s3 produced by the 3-step XOR swap has the EXACT
 -- same pixel maps as the state s_copy produced by CopySwap.
 pred showXorSwapMatchesCopySwap {
+	Grid.xsize = 1 and Grid.ysize = 3
+	all disj p1, p2: Pixel | p1.x != p2.x or p1.y != p2.y
 	some disj s0, s1, s2, s3, s_copy: SepPair |
 		seppair[s0.map1, s0.map2] and
 		PixMap1[s0.map1] and
@@ -410,6 +418,6 @@ pred showXorSwapMatchesCopySwap {
 		s3.map1 = s_copy.map1 and
 		s3.map2 = s_copy.map2
 }
-run showXorSwapMatchesCopySwap for 5 but exactly 5 SepPair, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
+run showXorSwapMatchesCopySwap for 5 but exactly 5 SepPair, exactly 3 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
 
 
