@@ -83,23 +83,31 @@ assert ZsizeOneImpliesBlackOrWhite {
 }
 check ZsizeOneImpliesBlackOrWhite for 4 but exactly 1 Grid
 
-let PixMap = Pixel -> ZRange -> lone BitVal
+sig PixMap {
+	entries: Pixel -> ZRange -> lone BitVal
+} {
+	all p: dom[entries], z: ZRange | one entries[p][z]
+}
+
+fact PixMapExtensionality {
+	all disj m1, m2: PixMap | m1.entries != m2.entries
+}
 
 assert AtMostOneBitVal {
-	all t: TestMaps, p: Pixel, z: ZRange | lone t.maps[p][z]
+	all t: TestMaps, p: Pixel, z: ZRange | lone t.maps.entries[p][z]
 }
 check AtMostOneBitVal for 4
 
-pred PixMap1[m: PixMap] { some m }
+pred PixMap1[m: PixMap] { some m.entries }
 
 pred rectangle[m: PixMap] {
 	PixMap1[m]
 	some p1, p2: Pixel | 
-		dom[m] = rect[p1, p2]
+		dom[m.entries] = rect[p1, p2]
 }
 
 pred overlaps[m1, m2: PixMap] {
-	some (dom[m1] & dom[m2])
+	some (dom[m1.entries] & dom[m2.entries])
 }
 
 
@@ -117,7 +125,7 @@ fun shift[p0: Pixel]: Pixel -> Pixel {
 -- We need to ensure that there is exactly one offset for each pixel in the PixMap.
 pred sameshape[m1, m2: PixMap] {
 	one p0: Pixel | 
-		(dom[m1]).(shift[p0]) = dom[m2]
+		(dom[m1.entries]).(shift[p0]) = dom[m2.entries]
 }
 
 pred mappair[m1, m2: PixMap] {
@@ -128,20 +136,22 @@ pred mappair[m1, m2: PixMap] {
 -- We need to ensure that there is exactly one offset for each pixel in the PixMap.
 pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
 	mappair[m1, m2]
-	p1 in dom[m1] and p2 in dom[m2]
+	p1 in dom[m1.entries] and p2 in dom[m2.entries]
 	one p0: Pixel | 
-		(dom[m1]).(shift[p0]) = dom[m2] and
+		(dom[m1.entries]).(shift[p0]) = dom[m2.entries] and
 		p1 -> p2 in shift[p0]
 }
 
 fun m_nand[m1, m2: PixMap]: PixMap {
-	let m = { p2: Pixel, n: ZRange, b: BitVal | 
-		mappair[m1, m2] and
-		p2 in dom[m2] and
-		one p1: dom[m1] | 
-			samepos[p1, m1, p2, m2] and
-			(n -> b) in v_NAND[m1[p1], m2[p2]] 
-	} | m	
+	{ m: PixMap |
+		m.entries = { p2: Pixel, n: ZRange, b: BitVal | 
+			mappair[m1, m2] and
+			p2 in dom[m2.entries] and
+			one p1: dom[m1.entries] | 
+				samepos[p1, m1, p2, m2] and
+				(n -> b) in v_NAND[m1.entries[p1], m2.entries[p2]] 
+		}
+	}
 }
 
 fun m_noop[m: PixMap]: PixMap {
@@ -206,12 +216,9 @@ fun m_equiv[m1, m2: PixMap]: PixMap {
 
 fact CompleteGrid { all i: XRange, j: YRange | one p: Pixel | p.x = i and p.y = j }
 
--- NOTE: Field types are written inline instead of using the PixMap macro,
--- because Alloy drops the `lone` multiplicity when a field is declared via a let macro.
 sig TestMaps {
-	maps: Pixel -> ZRange -> lone BitVal
+	maps: one PixMap
 } {
-	some maps
 	PixMap1[maps]
 }
 
@@ -236,18 +243,18 @@ run showTwoSetups for 4 but exactly 1 Grid, 6 Pixel, 2 TestMaps
 assert MapPairImpliesNANDCommutative {
 	all t1, t2: TestMaps |
 		let m1 = t1.maps, m2 = t2.maps |
-			mappair[m1, m2] and dom[m1] = dom[m2] implies m_nand[m1, m2] = m_nand[m2, m1]
+			mappair[m1, m2] and dom[m1.entries] = dom[m2.entries] implies m_nand[m1, m2] = m_nand[m2, m1]
 }
 
 check MapPairImpliesNANDCommutative for 4 but exactly 1 Grid, 4 Pixel, 2 TestMaps
 
 
 sig Display {
-	screen: Pixel -> ZRange -> lone BitVal
+	screen: one PixMap
 }
 
 pred deltaDisplay{
-	dom[Display.screen'] = dom[Display.screen]
+	dom[Display.screen'.entries] = dom[Display.screen.entries]
 }
 
 enum Op1 { NOOP, NOT, CLEAR, SET }
@@ -278,20 +285,26 @@ fun applyOp2[op: Op2, m1, m2: PixMap]: PixMap {
 	m_equiv[m1, m2]
 }
 
+fun restrictPixMap[m: PixMap, area: set Pixel]: PixMap {
+	{ r: PixMap | r.entries = area <: m.entries }
+}
+
 fun rasterOp1[screen: PixMap, area: set Pixel, op: Op1]: PixMap {
-	screen ++ applyOp1[op, area <: screen]
+	{ r: PixMap | r.entries = screen.entries ++ (applyOp1[op, restrictPixMap[screen, area]]).entries }
 }
 
 fun rasterOp2[screen: PixMap, area: set Pixel, from: Pixel, op: Op2]: PixMap {
-	let src = (area.(shift[from])) <: screen, 
-		dst = area <: screen |
-			screen ++ applyOp2[op, src, dst]
+	let src = restrictPixMap[screen, area.(shift[from])], 
+		dst = restrictPixMap[screen, area] |
+			{ r: PixMap | r.entries = screen.entries ++ (applyOp2[op, src, dst]).entries }
 }
 
 
 sig SepPair {
-	map1: Pixel -> ZRange -> lone BitVal,
-	map2: Pixel -> ZRange -> lone BitVal,
+	map1: one PixMap,
+	map2: one PixMap
+} {
+	seppair[map1, map2]
 }
 
 pred seppair[m1, m2: PixMap] {
@@ -338,14 +351,14 @@ assert seppairImpliesXorSwapIff {
         implies (s121.map1 = s212.map1 and s121.map2 = s212.map2)
 }
 
-check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 4 Pixel, 2 TestMaps
+check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 4 PixMap, 0 TestMaps, 0 Display, 0 PixelPair
 
 assert xorSwapIsCopySwap {
 	all s, s_a: SepPair |
 		swap121[s, s_a] implies s -> s_a in copyswap
 }
 
-check xorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 0 TestMaps, 0 Display, 0 PixelPair
+check xorSwapIsCopySwap for 4 but exactly 1 Grid, 2 Pixel, 4 PixMap, 0 TestMaps, 0 Display, 0 PixelPair
 
 --------------------------------------------------------------------------------
 -- VISUAL DEMONSTRATION COMMANDS FOR INSTRUCTOR PRESENTATION
@@ -358,10 +371,10 @@ pred showSepPairSetup {
 		seppair[s.map1, s.map2] and
 		PixMap1[s.map1] and
 		PixMap1[s.map2] and
-		(some p: dom[s.map1] | s.map1[p] = White) and
-		(some q: dom[s.map2] | s.map2[q] = Black)
+		(some p: dom[s.map1.entries] | s.map1.entries[p] = White) and
+		(some q: dom[s.map2.entries] | s.map2.entries[q] = Black)
 }
-run showSepPairSetup for 4 but 1 SepPair, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
+run showSepPairSetup for 4 but 1 SepPair, 2 PixMap, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
 
 -- Demo 2: Visualizing the Complete 3-Step XOR Swap Execution Trace
 -- Shows the 4 sequential states s0 -> s1 -> s2 -> s3:
@@ -374,13 +387,13 @@ pred showXorSwapTrace {
 		seppair[s0.map1, s0.map2] and
 		PixMap1[s0.map1] and
 		s0.map1 != s0.map2 and
-		(some p: dom[s0.map1] | s0.map1[p] = White) and
-		(some q: dom[s0.map2] | s0.map2[q] = Black) and
+		(some p: dom[s0.map1.entries] | s0.map1.entries[p] = White) and
+		(some q: dom[s0.map2.entries] | s0.map2.entries[q] = Black) and
 		s0 -> s1 in xor1 and
 		s1 -> s2 in xor2 and
 		s2 -> s3 in xor1
 }
-run showXorSwapTrace for 4 but exactly 4 SepPair, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
+run showXorSwapTrace for 4 but exactly 4 SepPair, 8 PixMap, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
 
 -- Demo 3: Visualizing CopySwap Before-and-After
 -- Shows the transition from initial state s0 to after-state s_copy via the simultaneous copy operation.
@@ -389,11 +402,11 @@ pred showCopySwapOperation {
 		seppair[s0.map1, s0.map2] and
 		PixMap1[s0.map1] and
 		s0.map1 != s0.map2 and
-		(some p: dom[s0.map1] | s0.map1[p] = White) and
-		(some q: dom[s0.map2] | s0.map2[q] = Black) and
+		(some p: dom[s0.map1.entries] | s0.map1.entries[p] = White) and
+		(some q: dom[s0.map2.entries] | s0.map2.entries[q] = Black) and
 		s0 -> s_copy in copyswap
 }
-run showCopySwapOperation for 4 but 2 SepPair, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
+run showCopySwapOperation for 4 but 2 SepPair, 6 PixMap, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
 
 -- Demo 4: Visualizing Equivalence Between 3-Step XorSwap and CopySwap
 -- Visually demonstrates that the state s3 produced by the 3-step XOR swap has the EXACT
@@ -410,6 +423,6 @@ pred showXorSwapMatchesCopySwap {
 		s3.map1 = s_copy.map1 and
 		s3.map2 = s_copy.map2
 }
-run showXorSwapMatchesCopySwap for 5 but exactly 5 SepPair, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
+run showXorSwapMatchesCopySwap for 5 but exactly 5 SepPair, 8 PixMap, 2 Pixel, exactly 1 Grid, 0 TestMaps, 0 Display, 0 PixelPair
 
 
