@@ -305,7 +305,7 @@ pred seppair[m1, m2: PixMap] {
 }
 
 -- Copyswap is a function that returns a map between the before and after states of a SepPair.
-pred Copyswap[s, s_a: SepPair] {
+pred copyswap[s, s_a: SepPair] {
 	seppair[s.map1, s.map2]
 	s_a.map1 = m_copy[s.map2, s.map1]
 	s_a.map2 = m_copy[s.map1, s.map2]
