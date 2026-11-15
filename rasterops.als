@@ -127,21 +127,19 @@ pred mappair[m1, m2: PixMap] {
 -- We need to use one here cause some does not work with the shift function.
 -- We need to ensure that there is exactly one offset for each pixel in the PixMap.
 pred samepos[p1: Pixel, m1: PixMap, p2: Pixel, m2: PixMap] {
-	mappair[m1, m2]
 	p1 in dom[m1] and p2 in dom[m2]
 	one p0: Pixel |
 		(dom[m1]).(shift[p0]) = dom[m2] and
-		p1 -> p2 in shift[p0]
+		p2 = offset[p0, p1]
 }
 
 fun m_nand[m1, m2: PixMap]: PixMap {
-	let m = { p2: Pixel, n: ZRange, b: BitVal |
-		mappair[m1, m2] and
+	{ p2: Pixel, n: ZRange, b: BitVal |
 		p2 in dom[m2] and
-		one p1: dom[m1] |
+		some p1: dom[m1] |
 			samepos[p1, m1, p2, m2] and
 			b = ((m1[p1][n] = SetVal and m2[p2][n] = SetVal) implies ClearVal else SetVal)
-	} | m
+	}
 }
 
 fun m_noop[m: PixMap]: PixMap {
