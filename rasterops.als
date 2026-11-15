@@ -220,7 +220,7 @@ assert SameposImpliesSameshape {
 	samepos[p1, m1, p2, m2] implies sameshape[m1, m2]
 }
 
-check SameposImpliesSameshape for 4 but exactly 1 Grid, 5 TestMaps
+check SameposImpliesSameshape for 4
 
 pred showTwoSetups {
 	some disj t1, t2: TestMaps {
