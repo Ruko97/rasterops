@@ -124,7 +124,6 @@ pred sameshape[m1, m2: PixMap] {
 }
 
 pred mappair[m1, m2: PixMap] {
-    PixMap1[m1] and PixMap1[m2]
 	sameshape[m1, m2]
 }
 
@@ -300,6 +299,7 @@ sig SepPair {
 }
 
 pred seppair[m1, m2: PixMap] {
+    PixMap1[m1] and PixMap1[m2]
 	mappair[m1, m2]
 	not overlaps[m1, m2]
 }
@@ -349,7 +349,7 @@ assert seppairImpliesXorSwapIff {
     all s, s_a: SepPair |
         swap121[s, s_a] iff swap212[s, s_a]
 }
-check seppairImpliesXorSwapIff for 3
+check seppairImpliesXorSwapIff for 4 but exactly 1 Grid, 2 Pixel, 2 SepPair, 0 TestMaps, 0 Display, 0 PixelPair
 
 assert xorSwapIsCopySwap {
     all s, s_a: SepPair |
